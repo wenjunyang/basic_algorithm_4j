@@ -74,7 +74,7 @@ public class SimHash<T> {
             List<Long> list = values[indexs[i]];
             if (list != null) {
                 for (Long hc : list) {
-                    distance = Ints.min(distance, hmDistance(hashCode, hc));
+                    distance = Ints.min(distance, bitCount(hashCode ^ hc));
                 }
                 if (distance <= this.simThreshold) {
                     return distance;
@@ -120,9 +120,9 @@ public class SimHash<T> {
         return dist <= this.simThreshold;
     }
 
-    public static <T> long fingerprint(List<T> ts) {
+    public long fingerprint(List<T> doc1) {
         int[] values = new int[SIZE];
-        for (T t : ts) {
+        for (T t : doc1) {
             long hashCode = MurmurHash.hash64(t.toString());
             for (int i = 0; i < SIZE; i++) {
                 if ((hashCode & (1 << i)) != 0) {
@@ -141,12 +141,7 @@ public class SimHash<T> {
         return result;
     }
 
-    public static <T> int hmDistance(List<T> ts1, List<T> ts2) {
-        return hmDistance(fingerprint(ts1), fingerprint(ts2));
+    public int hmDistance(List<T> doc1, List<T> doc2) {
+        return bitCount(fingerprint(doc1) ^ fingerprint(doc2));
     }
-
-    public static int hmDistance(long hc1, long hc2) {
-        return bitCount(hc1 ^ hc2);
-    }
-
 }
