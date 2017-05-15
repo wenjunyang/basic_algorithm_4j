@@ -35,11 +35,11 @@ public class SimHash<T> {
     private List<Long>[] values;
 
     public SimHash() {
-        this(3, 4);
+        this(MAX_THRESHOLD, LEGAL_SEG_NUMS[0]);
     }
 
     public SimHash(int simThreshold) {
-        this(simThreshold, 4);
+        this(simThreshold, LEGAL_SEG_NUMS[0]);
     }
 
     public SimHash(int simThreshold, int segNum) {
@@ -94,13 +94,13 @@ public class SimHash<T> {
         }
     }
 
-    public int nearest(List<T> ts) {
+    public int nearest(Iterable<T> ts) {
         long hashCode = fingerprint(ts);
         int[] indexs = makeIndex(hashCode);
         return nearest(indexs, hashCode);
     }
 
-    public boolean check(List<T> ts) {
+    public boolean check(Iterable<T> ts) {
         return nearest(ts) <= this.simThreshold;
     }
 
@@ -110,7 +110,7 @@ public class SimHash<T> {
      * @param ts
      * @return
      */
-    public boolean checkAndAdd(List<T> ts) {
+    public boolean checkAndAdd(Iterable<T> ts) {
         long hashCode =fingerprint(ts);
         int[] indexs = makeIndex(hashCode);
         int dist = nearest(indexs, hashCode);
@@ -120,7 +120,7 @@ public class SimHash<T> {
         return dist <= this.simThreshold;
     }
 
-    public long fingerprint(List<T> doc1) {
+    public long fingerprint(Iterable<T> doc1) {
         int[] values = new int[SIZE];
         for (T t : doc1) {
             long hashCode = MurmurHash.hash64(t.toString());
@@ -141,7 +141,7 @@ public class SimHash<T> {
         return result;
     }
 
-    public int hmDistance(List<T> doc1, List<T> doc2) {
+    public int hmDistance(Iterable<T> doc1, Iterable<T> doc2) {
         return bitCount(fingerprint(doc1) ^ fingerprint(doc2));
     }
 }
